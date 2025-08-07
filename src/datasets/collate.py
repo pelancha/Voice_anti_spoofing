@@ -14,7 +14,7 @@ def collate_fn(dataset_items: list[dict]):
             of the tensors.
     """
     K = 750 # In https://arxiv.org/pdf/2103.11326 it is claimed that it is enough to fix length of k=750 to cover input features of 98% trials.
-    result_batch = {"data_object": [], "label": []}
+    result_batch = {"data_object": [], "labels": []}
 
     for elem in dataset_items:
         audio = elem["data_object"]
@@ -30,9 +30,9 @@ def collate_fn(dataset_items: list[dict]):
             audio = audio[:, :, start:start + K]
         
         result_batch["data_object"].append(audio)
-        result_batch["label"].append(elem["label"])
+        result_batch["labels"].append(elem["labels"])
 
     result_batch["data_object"] = torch.stack(result_batch["data_object"])
-    result_batch["label"] = torch.tensor(result_batch["label"])
+    result_batch["labels"] = torch.tensor(result_batch["labels"])
 
     return result_batch
