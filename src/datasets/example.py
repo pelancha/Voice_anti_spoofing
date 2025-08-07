@@ -107,21 +107,18 @@ class AntiSpoofDataset(BaseDataset):
         Create index for the dataset. The function processes dataset metadata
         and utilizes it to get information dict for each element of
         the dataset.
-
-        Args:
-            input_length (int): length of the random vector.
-            n_classes (int): number of classes.
-            dataset_length (int): the total number of elements in
-                this random dataset.
-            name (str): partition name
-        Returns:
-            index (list[dict]): list, containing dict for each element of
-                the dataset. The dict has required metadata information,
-                such as label and object path.
         """
         index = []
         data_path = ROOT_PATH / "input" / "asvpoof-2019-dataset" / "LA" / "LA" / "ASVspoof2019_LA_cm_protocols" / f"ASVspoof2019.LA.cm.{name}.tr{'n' if name == 'train' else 'l'}.txt"
         audio_path = ROOT_PATH / "input" / "asvpoof-2019-dataset" / "LA" / "LA" / f"ASVspoof2019_LA_{name}" / "flac"
+
+        print(f"Data path: {data_path}")
+        print(f"Audio path: {audio_path}")
+
+        if not data_path.exists():
+            raise FileNotFoundError(f"Metadata file not found: {data_path}")
+        if not audio_path.exists():
+            raise FileNotFoundError(f"Audio directory not found: {audio_path}")
 
         print(f"Reading ASVspoof2019 {name} dataset...")
         with open(data_path, 'r') as f:
