@@ -2,7 +2,8 @@ from abc import abstractmethod
 
 import torch
 from numpy import inf
-import numoy as np
+import numpy as np
+import pandas as pd
 from torch.nn.utils import clip_grad_norm_
 from tqdm.auto import tqdm
 
@@ -243,11 +244,10 @@ class BaseTrainer:
 
         logs = last_train_metrics
 
-        # Run val/test
-        if epoch % 3 == 0:
-            for part, dataloader in self.evaluation_dataloaders.items():
-                val_logs = self._evaluation_epoch(epoch, part, dataloader)
-                logs.update(**{f"{part}_{name}": value for name, value in val_logs.items()})
+
+        for part, dataloader in self.evaluation_dataloaders.items():
+            val_logs = self._evaluation_epoch(epoch, part, dataloader)
+            logs.update(**{f"{part}_{name}": value for name, value in val_logs.items()})
 
         return logs
 
@@ -267,6 +267,7 @@ class BaseTrainer:
         self.evaluation_metrics.reset()
 
         all_labels, all_scores = [], []
+        keys = [] if part == "eval" else None
 
         with torch.no_grad():
             for batch_idx, batch in tqdm(
@@ -282,6 +283,9 @@ class BaseTrainer:
                 scores = torch.softmax(batch["output"], dim=1)[:, 1]
                 all_labels.extend(batch["label"].detach().cpu().numpy())
                 all_scores.extend(scores.detach().cpu().numpy())
+
+                if part == "eval":
+                    keys.extend(batch["key"].detach().cpu().numpy())
 
             self.writer.set_step(epoch * self.epoch_len, part)
             self._log_scalars(self.evaluation_metrics)
@@ -301,6 +305,16 @@ class BaseTrainer:
 
         logs = self.evaluation_metrics.result()
         logs["EER"] = eer
+
+        if part == "eval":
+            df = pd.DataFrame({
+                "key": keys,
+                "score": all_scores
+            })
+        
+            df.to_csv(f"results_epoch_{epoch + 1}.csv", index=False, header=False)
+            self.logger.info(f"Saved scores to results_epoch_{epoch + 1}.csv")
+
         return logs
 
     def _monitor_performance(self, logs, not_improved_count):
