@@ -117,6 +117,9 @@ class AntiSpoofDataset(BaseDataset):
 
         print(f"Reading ASVspoof2019 {name} dataset...")
         with open(data_path, 'r') as f:
+            print(f"Creating index for {name} dataset...")
+            print(f"Data path: {data_path}")
+            print(f"Audio path: {audio_path}")
             for line in f:
                 line = line.split()
                 # parse dataset metadata and append it to index
