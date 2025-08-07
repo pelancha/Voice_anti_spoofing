@@ -127,7 +127,7 @@ class AntiSpoofDataset(BaseDataset):
                 line = line.split()
 # TODO: delete
                 elem_path = audio_path / f"{line[1]}.flac"
-                if not audio_path.exists():
+                if not elem_path.exists():
                     raise FileNotFoundError(f"Audio directory not found: {audio_path}")
                 # parse dataset metadata and append it to index
                 index.append({"path": audio_path / f"{line[1]}.flac", 
