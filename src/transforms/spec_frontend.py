@@ -27,7 +27,7 @@ class SpectrogramFrontEnd(nn.Module):
             "n_fft": self.n_fft,
             "win_length": self.win_length,
             "hop_length": self.hop_length, 
-            "window_fn": self.window_fn, 
+            "window_fn": self.window_fn(self.win_length), 
             "power": self.power,
             "normalized": self.normalized,
         }
