@@ -5,7 +5,7 @@ train:
       n_fft: 512
       win_length_s: 0.020
       hop_length_s: 0.010
-      window_fn: torch.hann_window 
+      window_fn: ${callable:torch.hann_window }
       power: None
       normalized: False 
       n_filter_banks: 60
@@ -16,7 +16,7 @@ inference:
       n_fft: 512
       win_length_s: 0.020
       hop_length_s: 0.010
-      window_fn: torch.hann_window 
+      window_fn: ${callable:torch.hann_window }
       power: None
       normalized: False 
       n_filter_banks: 60
