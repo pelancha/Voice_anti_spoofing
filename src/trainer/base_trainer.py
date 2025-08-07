@@ -281,7 +281,7 @@ class BaseTrainer:
                 )
 
                 scores = torch.softmax(batch["output"], dim=1)[:, 1]
-                all_labels.extend(batch["label"].detach().cpu().numpy())
+                all_labels.extend(batch["labels"].detach().cpu().numpy())
                 all_scores.extend(scores.detach().cpu().numpy())
 
                 if part == "eval":
