@@ -56,12 +56,15 @@ def main(config):
     trainable_params = filter(lambda p: p.requires_grad, model.parameters())
     optimizer = instantiate(config.optimizer, params=trainable_params)
 
+    epoch_len = len(dataloaders["train"])
+    config.trainer.epoch_len = epoch_len
+
     config.lr_scheduler.T_max = config.trainer.n_epochs * config.trainer.epoch_len
     lr_scheduler = instantiate(config.lr_scheduler, optimizer=optimizer)
 
     # epoch_len = number of iterations for iteration-based training
     # epoch_len = None or len(dataloader) for epoch-based training
-    epoch_len = len(dataloaders["train"])
+
 
     trainer = Trainer(
         model=model,
