@@ -39,7 +39,7 @@ def set_random_seed(seed):
     torch.manual_seed(seed)
     torch.backends.cudnn.deterministic = True
     # benchmark=True works faster but reproducibility decreases
-    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.benchmark = True
     np.random.seed(seed)
     random.seed(seed)
     os.environ["PYTHONHASHSEED"] = str(seed)
@@ -160,3 +160,43 @@ def setup_saving_and_logging(config):
     logger.setLevel(logging.DEBUG)
 
     return logger
+
+
+def convOutputSizeParam(input_size, kernel_size, stride, padding=0):
+    return [int(input_size[0] - kernel_size + 2 * padding / stride) + 1, 
+            int(input_size[1] - kernel_size + 2 * padding / stride) + 1]
+
+def maxPoolOutputSizeParam(input_size, filter_size, stride):
+    return [int((input_size[0] - filter_size) / stride) + 1,
+            int((input_size[1] - filter_size) / stride) + 1]
+
+def computeLinearInputSize(input_audio):
+    size = list(input_audio.size())[1:] #CHANNELS x WIDTH x HEIGHT torch.Size([1, 60, 750])
+    size_1 = convOutputSizeParam(input_size=size, kernel_size=5, stride=1, padding=2)
+    size_2 = maxPoolOutputSizeParam(input_size=size_1, filter_size=2, stride=2)
+    size_3 = convOutputSizeParam(input_size=size_2, kernel_size=1, stride=1)
+    #MFM preserves WIDTH x HEIGHT
+    #BatchNorm preserves WIDTH x HEIGHT
+    size_7 = convOutputSizeParam(input_size=size_3, kernel_size=3, stride=1, padding=1)
+    #MFM preserves WIDTH x HEIGHT
+    size_9 = maxPoolOutputSizeParam(input_size=size_7, filter_size=2, stride=2)
+    #BatchNorm preserves WIDTH x HEIGHT
+    size_11 = convOutputSizeParam(input_size=size_9, kernel_size=1, stride=1)
+    #MFM preserves WIDTH x HEIGHT
+    #BatchNorm preserves WIDTH x HEIGHT
+    size_14 = convOutputSizeParam(input_size=size_11, kernel_size=3, stride=1, padding=1)
+    #MFM preserves WIDTH x HEIGHT
+    size_16 = maxPoolOutputSizeParam(input_size=size_14, filter_size=2, stride=2)
+    size_17 = convOutputSizeParam(input_size=size_16, kernel_size=1, stride=1)
+    #MFM preserves WIDTH x HEIGHT
+    #BatchNorm preserves WIDTH x HEIGHT
+    size_20 = convOutputSizeParam(input_size=size_17, kernel_size=3, stride=1, padding=1)
+    #MFM preserves WIDTH x HEIGHT
+    #BatchNorm preserves WIDTH x HEIGHT
+    size_23 = convOutputSizeParam(input_size=size_20, kernel_size=1, stride=1)
+    #MFM preserves WIDTH x HEIGHT
+    #BatchNorm preserves WIDTH x HEIGHT
+    size_26 = convOutputSizeParam(input_size=size_23, kernel_size=3, stride=1, padding=1)
+    #MFM preserves WIDTH x HEIGHT
+    size_28 = maxPoolOutputSizeParam(input_size=size_26, filter_size=2, stride=2)
+    return size_28

@@ -1,24 +1,25 @@
 defaults:
   - model: baseline
-  - writer: wandb
+  - writer: cometml
   - metrics: example
   - datasets: example
   - dataloader: example
   - transforms: example
   - _self_
 optimizer:
-  _target_: torch.optim.Adam
-  lr: 3e-4
+  _target_: torch.optim.AdamW
+  betas: (0.9, 0.999)
+  eps: 1e-08
+  lr: 0.003
 lr_scheduler:
-  _target_: torch.optim.lr_scheduler.StepLR
-  gamma: 0.9
-  step_size: ${trainer.epoch_len}
+  _target_: torch.optim.lr_scheduler.CosineAnnealingLR
+  T_max: 0
 loss_function:
-  _target_: src.loss.ExampleLoss
+  _target_: src.loss.CrossEntropyLoss
 trainer:
   log_step: 50
-  n_epochs: 100
-  epoch_len: 500
+  n_epochs: 40
+  # epoch_len: 500
   device_tensors: ["data_object", "labels"] # which tensors should be on device (ex. GPU)
   resume_from: null # null or path to the checkpoint dir with *.pth and config.yaml
   device: auto # device name or "auto"
@@ -27,4 +28,4 @@ trainer:
   save_period: 5 # checkpoint each save_period epochs in addition to the best epoch
   early_stop: ${trainer.n_epochs} # epochs for early stopping
   save_dir: "saved"
-  seed: 1
+  seed: 52

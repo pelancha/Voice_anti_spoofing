@@ -1,5 +1,5 @@
+import random
 import torch
-
 
 def collate_fn(dataset_items: list[dict]):
     """
@@ -13,13 +13,26 @@ def collate_fn(dataset_items: list[dict]):
         result_batch (dict[Tensor]): dict, containing batch-version
             of the tensors.
     """
+    K = 750 # In https://arxiv.org/pdf/2103.11326 it is claimed that it is enough to fix length of k=750 to cover input features of 98% trials.
+    result_batch = {"data_object": [], "label": []}
 
-    result_batch = {}
+    for elem in dataset_items:
+        audio = elem["data_object"]
+        _, _, length = audio.shape
 
-    # example of collate_fn
-    result_batch["data_object"] = torch.vstack(
-        [elem["data_object"] for elem in dataset_items]
-    )
-    result_batch["labels"] = torch.tensor([elem["labels"] for elem in dataset_items])
+        if length < K:
+            repeat_factor = (K + length - 1) // length
+            audio = audio.repeat(1, 1, repeat_factor)
+            audio = audio[:, :, :K]
+        else:
+            max_start = length - K
+            start = random.randint(0, max_start)
+            audio = audio[:, :, start:start + K]
+        
+        result_batch["data_object"].append(audio)
+        result_batch["label"].append(elem["label"])
+
+    result_batch["data_object"] = torch.stack(result_batch["data_object"])
+    result_batch["label"] = torch.tensor(result_batch["label"])
 
     return result_batch

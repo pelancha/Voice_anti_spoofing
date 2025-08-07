@@ -7,7 +7,7 @@ from omegaconf import OmegaConf
 
 from src.datasets.data_utils import get_dataloaders
 from src.trainer import Trainer
-from src.utils.init_utils import set_random_seed, setup_saving_and_logging
+from src.utils.init_utils import set_random_seed, setup_saving_and_logging, computeLinearInputSize
 
 warnings.filterwarnings("ignore", category=UserWarning)
 
@@ -37,6 +37,13 @@ def main(config):
     # batch_transforms should be put on device
     dataloaders, batch_transforms = get_dataloaders(config, device)
 
+    #calculate input size for fc layer 
+    example_dataset = dataloaders["train"].dataset
+    example_sample = example_dataset[0]["data_object"]  
+    linear_input_size = computeLinearInputSize(example_sample)
+
+    config.model.linear_input_size = linear_input_size
+
     # build model architecture, then print to console
     model = instantiate(config.model).to(device)
     logger.info(model)
@@ -48,11 +55,13 @@ def main(config):
     # build optimizer, learning rate scheduler
     trainable_params = filter(lambda p: p.requires_grad, model.parameters())
     optimizer = instantiate(config.optimizer, params=trainable_params)
+
+    config.lr_scheduler.T_max = config.trainer.n_epochs * config.trainer.epoch_len
     lr_scheduler = instantiate(config.lr_scheduler, optimizer=optimizer)
 
     # epoch_len = number of iterations for iteration-based training
     # epoch_len = None or len(dataloader) for epoch-based training
-    epoch_len = config.trainer.get("epoch_len")
+    epoch_len = len(dataloaders["train"])
 
     trainer = Trainer(
         model=model,

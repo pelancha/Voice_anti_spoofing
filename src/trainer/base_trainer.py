@@ -2,6 +2,7 @@ from abc import abstractmethod
 
 import torch
 from numpy import inf
+import numoy as np
 from torch.nn.utils import clip_grad_norm_
 from tqdm.auto import tqdm
 
@@ -243,9 +244,10 @@ class BaseTrainer:
         logs = last_train_metrics
 
         # Run val/test
-        for part, dataloader in self.evaluation_dataloaders.items():
-            val_logs = self._evaluation_epoch(epoch, part, dataloader)
-            logs.update(**{f"{part}_{name}": value for name, value in val_logs.items()})
+        if epoch % 3 == 0:
+            for part, dataloader in self.evaluation_dataloaders.items():
+                val_logs = self._evaluation_epoch(epoch, part, dataloader)
+                logs.update(**{f"{part}_{name}": value for name, value in val_logs.items()})
 
         return logs
 
@@ -263,6 +265,9 @@ class BaseTrainer:
         self.is_train = False
         self.model.eval()
         self.evaluation_metrics.reset()
+
+        all_labels, all_scores = [], []
+
         with torch.no_grad():
             for batch_idx, batch in tqdm(
                 enumerate(dataloader),
@@ -273,13 +278,30 @@ class BaseTrainer:
                     batch,
                     metrics=self.evaluation_metrics,
                 )
+
+                scores = torch.softmax(batch["output"], dim=1)[:, 1]
+                all_labels.extend(batch["label"].detach().cpu().numpy())
+                all_scores.extend(scores.detach().cpu().numpy())
+
             self.writer.set_step(epoch * self.epoch_len, part)
             self._log_scalars(self.evaluation_metrics)
             self._log_batch(
                 batch_idx, batch, part
             )  # log only the last batch during inference
 
-        return self.evaluation_metrics.result()
+        all_scores = np.array(all_scores)
+        all_labels = np.array(all_labels)
+
+        bonafide_scores = all_scores[all_labels == 1]
+        spoof_scores = all_scores[all_labels == 0]
+
+        eer, _ = self.metric["inference"](bonafide_scores, spoof_scores)
+
+        self.writer.add_scalar("EER", eer)
+
+        logs = self.evaluation_metrics.result()
+        logs["EER"] = eer
+        return logs
 
     def _monitor_performance(self, logs, not_improved_count):
         """
