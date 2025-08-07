@@ -1,23 +1,25 @@
 train:
   data_object: #TODO: name of the tensor on which we apply transform
-    - _target_: src.transforms.SpectrogramFrontEnd 
-      sample_rate: 16000
-      n_fft: 512
-      win_length_s: 0.020
-      hop_length_s: 0.010
-      window_fn: torch.hann_window 
-      power: null
-      normalized: False 
-      n_filter_banks: 60
+    transforms:
+      - _target_: src.transforms.SpectrogramFrontEnd 
+        sample_rate: 16000
+        n_fft: 512
+        win_length_s: 0.020
+        hop_length_s: 0.010
+        window_fn: torch.hann_window 
+        power: null
+        normalized: False 
+        n_filter_banks: 60
 inference:
   data_object: #TODO: name of the tensor on which we apply transform
-    - _target_: src.transforms.SpectrogramFrontEnd 
-      sample_rate: 16000
-      n_fft: 512
-      win_length_s: 0.020
-      hop_length_s: 0.010
-      window_fn: torch.hann_window 
-      power: null
-      normalized: False 
-      n_filter_banks: 60
+    transforms:
+      - _target_: src.transforms.SpectrogramFrontEnd 
+        sample_rate: 16000
+        n_fft: 512
+        win_length_s: 0.020
+        hop_length_s: 0.010
+        window_fn: torch.hann_window 
+        power: null
+        normalized: False 
+        n_filter_banks: 60
 
