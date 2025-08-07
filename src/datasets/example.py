@@ -3,6 +3,8 @@ import torchaudio
 from src.datasets.base_dataset import BaseDataset
 from src.utils.io_utils import ROOT_PATH, read_json, write_json
 
+from pathlib import Path
+
 
 # class ExampleDataset(BaseDataset):
 #     """
@@ -109,8 +111,8 @@ class AntiSpoofDataset(BaseDataset):
         the dataset.
         """
         index = []
-        data_path = "kaggle" / "input" / "asvpoof-2019-dataset" / "LA" / "LA" / "ASVspoof2019_LA_cm_protocols" / f"ASVspoof2019.LA.cm.{name}.tr{'n' if name == 'train' else 'l'}.txt"
-        audio_path = "kaggle" / "input" / "asvpoof-2019-dataset" / "LA" / "LA" / f"ASVspoof2019_LA_{name}" / "flac"
+        data_path = Path("kaggle") / "input" / "asvpoof-2019-dataset" / "LA" / "LA" / "ASVspoof2019_LA_cm_protocols" / f"ASVspoof2019.LA.cm.{name}.tr{'n' if name == 'train' else 'l'}.txt"
+        audio_path = Path("kaggle") / "input" / "asvpoof-2019-dataset" / "LA" / "LA" / f"ASVspoof2019_LA_{name}" / "flac"
 
         print(f"Data path: {data_path}")
         print(f"Audio path: {audio_path}")
