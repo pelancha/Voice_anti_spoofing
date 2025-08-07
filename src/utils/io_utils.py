@@ -2,8 +2,8 @@ import json
 from collections import OrderedDict
 from pathlib import Path
 
-# ROOT_PATH = Path(__file__).absolute().resolve().parent.parent.parent
-ROOT_PATH = Path("/kaggle")
+ROOT_PATH = Path(__file__).absolute().resolve().parent.parent.parent
+# ROOT_PATH = Path("/kaggle")
 
 
 def read_json(fname):
