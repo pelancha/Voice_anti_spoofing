@@ -101,8 +101,9 @@ class BaseDataset(Dataset):
         """
         if self.instance_transforms is not None:
             for transform_name, transform_cfg in self.instance_transforms.items():
-                transform_fn = instantiate(transform_cfg)
-                instance_data[transform_name] = transform_fn(instance_data[transform_name])
+                instance_data[transform_name] = transform_cfg(
+                    instance_data[transform_name]
+                    )
         return instance_data
 
     @staticmethod
