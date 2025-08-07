@@ -1,5 +1,6 @@
 train:
   data_object: #TODO: name of the tensor on which we apply transform
+    _target_: torchvision.transforms.v2.Compose
     transforms:
       - _target_: src.transforms.SpectrogramFrontEnd 
         sample_rate: 16000
@@ -12,6 +13,7 @@ train:
         n_filter_banks: 60
 inference:
   data_object: #TODO: name of the tensor on which we apply transform
+    _target_: torchvision.transforms.v2.Compose
     transforms:
       - _target_: src.transforms.SpectrogramFrontEnd 
         sample_rate: 16000

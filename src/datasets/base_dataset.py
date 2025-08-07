@@ -62,7 +62,7 @@ class BaseDataset(Dataset):
         data_object = self.load_object(data_path)
         data_label = data_dict["label"]
 
-        instance_data = {"data_object": data_object, "labels": data_label} #TODO: i also need filename for grading.py?
+        instance_data = {"data_object": data_object, "labels": data_label}
         instance_data = self.preprocess_data(instance_data)
 
         return instance_data
@@ -100,10 +100,10 @@ class BaseDataset(Dataset):
                 instance transform).
         """
         if self.instance_transforms is not None:
-            for transform_name, transform_cfg in self.instance_transforms.items():
-                instance_data[transform_name] = transform_cfg(
-                    instance_data[transform_name]
-                    )
+            for transform_name in self.instance_transforms.keys():
+                instance_data[transform_name] = self.instance_transforms[
+                    transform_name
+                ](instance_data[transform_name])
         return instance_data
 
     @staticmethod
