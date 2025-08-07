@@ -2,6 +2,7 @@ import torch
 from torch import nn
 import torchaudio
 import numpy as np
+import hydra
 
 class SpectrogramFrontEnd(nn.Module):
     def __init__(self, sample_rate, n_fft, win_length_s, hop_length_s, window_fn, power, normalized, n_filter_banks):
@@ -10,7 +11,7 @@ class SpectrogramFrontEnd(nn.Module):
         self.n_fft = n_fft 
         self.win_length = int(self.sample_rate * win_length_s)
         self.hop_length = int(self.sample_rate * hop_length_s)
-        self.window_fn = window_fn
+        self.window_fn = hydra.utils.get_method(window_fn)
         self.power = power
         self.normalized = normalized
         
