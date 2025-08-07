@@ -109,8 +109,8 @@ class AntiSpoofDataset(BaseDataset):
         the dataset.
         """
         index = []
-        data_path = ROOT_PATH / "input" / "asvpoof-2019-dataset" / "LA" / "LA" / "ASVspoof2019_LA_cm_protocols" / f"ASVspoof2019.LA.cm.{name}.tr{'n' if name == 'train' else 'l'}.txt"
-        audio_path = ROOT_PATH / "input" / "asvpoof-2019-dataset" / "LA" / "LA" / f"ASVspoof2019_LA_{name}" / "flac"
+        data_path = "kaggle" / "input" / "asvpoof-2019-dataset" / "LA" / "LA" / "ASVspoof2019_LA_cm_protocols" / f"ASVspoof2019.LA.cm.{name}.tr{'n' if name == 'train' else 'l'}.txt"
+        audio_path = "kaggle" / "input" / "asvpoof-2019-dataset" / "LA" / "LA" / f"ASVspoof2019_LA_{name}" / "flac"
 
         print(f"Data path: {data_path}")
         print(f"Audio path: {audio_path}")
