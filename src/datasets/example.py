@@ -124,7 +124,6 @@ class AntiSpoofDataset(BaseDataset):
             for line in f:
                 line = line.split()
                 # parse dataset metadata and append it to index
-                print(f"Index contents: {index[:5]}") 
                 index.append({"path": str(audio_path / f"{line[1]}.flac"), 
                               "label": 1 if line[-1] == "bonafide" else 0})
 
