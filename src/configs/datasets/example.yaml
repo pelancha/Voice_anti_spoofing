@@ -1,8 +1,7 @@
 train:
-  datasets:
-    - _target_: src.datasets.AntiSpoofDataset
-      name: "train"
-      instance_transforms: ${transforms.instance_transforms.train}
+  _target_: src.datasets.AntiSpoofDataset
+  name: "train"
+  instance_transforms: ${transforms.instance_transforms.train}
 dev: #val
   _target_: src.datasets.AntiSpoofDataset
   name: "dev"

@@ -115,20 +115,10 @@ class AntiSpoofDataset(BaseDataset):
         print(f"Data path: {data_path}")
         print(f"Audio path: {audio_path}")
 
-# TODO: delete
-        if not data_path.exists():
-            raise FileNotFoundError(f"Metadata file not found: {data_path}")
-        if not audio_path.exists():
-            raise FileNotFoundError(f"Audio directory not found: {audio_path}")
-
         print(f"Reading ASVspoof2019 {name} dataset...")
         with open(data_path, 'r') as f:
             for line in f:
                 line = line.split()
-# TODO: delete
-                elem_path = audio_path / f"{line[1]}.flac"
-                if not elem_path.exists():
-                    raise FileNotFoundError(f"Audio directory not found: {audio_path}")
                 # parse dataset metadata and append it to index
                 index.append({"path": audio_path / f"{line[1]}.flac", 
                               "label": 1 if line[-1] == "bonafide" else 0})
