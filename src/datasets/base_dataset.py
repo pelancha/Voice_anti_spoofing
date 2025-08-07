@@ -5,6 +5,8 @@ from typing import List
 import torch
 from torch.utils.data import Dataset
 
+from hydra.utils import instantiate
+
 logger = logging.getLogger(__name__)
 
 
@@ -98,10 +100,9 @@ class BaseDataset(Dataset):
                 instance transform).
         """
         if self.instance_transforms is not None:
-            for transform_name in self.instance_transforms.keys():
-                instance_data[transform_name] = self.instance_transforms[
-                    transform_name
-                ](instance_data[transform_name])
+            for transform_name, transform_cfg in self.instance_transforms.items():
+                transform_fn = instantiate(transform_cfg)
+                instance_data[transform_name] = transform_fn(instance_data[transform_name])
         return instance_data
 
     @staticmethod
