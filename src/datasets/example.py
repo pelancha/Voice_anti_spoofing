@@ -120,8 +120,8 @@ class AntiSpoofDataset(BaseDataset):
                 such as label and object path.
         """
         index = []
-        data_path = ROOT_PATH / "kaggle" / "input" / "asvpoof-2019-dataset" / "LA" / "LA" / "ASVspoof2019_LA_cm_protocols" / f"ASVspoof2019.LA.cm.{name}.tr{'n' if name == 'train' else 'l'}.txt"
-        audio_path = ROOT_PATH / "kaggle" / "input" / "asvpoof-2019-dataset" / "LA" / "LA" / f"ASVspoof2019_LA_{name}" / "flac"
+        data_path = ROOT_PATH / "input" / "asvpoof-2019-dataset" / "LA" / "LA" / "ASVspoof2019_LA_cm_protocols" / f"ASVspoof2019.LA.cm.{name}.tr{'n' if name == 'train' else 'l'}.txt"
+        audio_path = ROOT_PATH / "input" / "asvpoof-2019-dataset" / "LA" / "LA" / f"ASVspoof2019_LA_{name}" / "flac"
 
         print(f"Reading ASVspoof2019 {name} dataset...")
         with open(data_path, 'r') as f:
