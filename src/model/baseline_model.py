@@ -115,6 +115,6 @@ class LCNN(nn.Module):
     
     # def _computeLinearInputSize(self):
 
-    def forward(self, x):
-        out = self.net(x)
-        return {"output": out}
+    def forward(self, data_object, **batch):
+        out = self.net(data_object)
+        return {"logits": out}
