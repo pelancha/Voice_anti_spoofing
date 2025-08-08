@@ -222,7 +222,7 @@ class BaseTrainer:
 
             self.train_metrics.update("grad_norm", self._get_grad_norm())
             self.writer.set_step((epoch - 1) * self.epoch_len + batch_idx)
-            self.writer.add_scalar("train_step_loss", batch["loss"].item())
+            self.writer.add_scalar("loss", batch["loss"].item()) #"train_step_loss" - original name in cometml
 
             # log current results
             if batch_idx % self.log_step == 0:
