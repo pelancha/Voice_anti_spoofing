@@ -287,7 +287,7 @@ class BaseTrainer:
                 all_scores.extend(scores.detach().cpu().numpy())
 
                 if part == "eval":
-                    keys.extend(batch["key"].detach().cpu().numpy())
+                    keys.extend(batch["key"])
 
             self.writer.set_step(epoch * self.epoch_len, part)
             self._log_scalars(self.evaluation_metrics)
