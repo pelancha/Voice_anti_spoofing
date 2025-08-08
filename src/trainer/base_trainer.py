@@ -222,14 +222,16 @@ class BaseTrainer:
 
             self.train_metrics.update("grad_norm", self._get_grad_norm())
 
+            self.writer.add_scalar("train_step_loss", batch["loss"].item())
+
             # log current results
             if batch_idx % self.log_step == 0:
                 self.writer.set_step((epoch - 1) * self.epoch_len + batch_idx)
-                self.logger.debug(
-                    "Train Epoch: {} {} Loss: {:.6f}".format(
-                        epoch, self._progress(batch_idx), batch["loss"].item()
-                    )
-                )
+                # self.logger.debug(
+                #     "Train Epoch: {} {} Loss: {:.6f}".format(
+                #         epoch, self._progress(batch_idx), batch["loss"].item()
+                #     )
+                # )
                 self.writer.add_scalar(
                     "learning rate", self.lr_scheduler.get_last_lr()[0]
                 )
@@ -299,7 +301,7 @@ class BaseTrainer:
         bonafide_scores = all_scores[all_labels == 1]
         spoof_scores = all_scores[all_labels == 0]
 
-        eer, _ = self.metric["inference"](bonafide_scores, spoof_scores)
+        eer, _ = self.metrics["inference"](bonafide_scores, spoof_scores)
 
         self.writer.add_scalar("EER", eer)
 
