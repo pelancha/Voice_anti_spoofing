@@ -6,7 +6,7 @@ from hydra.utils import instantiate
 
 from src.datasets.data_utils import get_dataloaders
 from src.trainer import Inferencer
-from src.utils.init_utils import set_random_seed
+from src.utils.init_utils import set_random_seed, computeLinearInputSize
 from src.utils.io_utils import ROOT_PATH
 
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -32,6 +32,16 @@ def main(config):
     # setup data_loader instances
     # batch_transforms should be put on device
     dataloaders, batch_transforms = get_dataloaders(config, device)
+
+    #calculate input size for fc layer 
+    example_dataset = dataloaders["eval"].dataset
+    example_sample = example_dataset[0]["data_object"]  
+
+    example_sample = torch.randn(example_sample.size(0), example_sample.size(1), 750)  # the size of all objects are trim-padded in collate_fn
+    linear_input_size = computeLinearInputSize(example_sample)
+    # print(linear_input_size)
+
+    config.model.linear_input_size = linear_input_size
 
     # build model architecture, then print to console
     model = instantiate(config.model).to(device)
