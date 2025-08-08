@@ -308,8 +308,7 @@ class BaseTrainer:
                 eer, _ = met(bonafide_scores, spoof_scores) #TODO: rewrite using MetricTracker and process_batch
                 break
 
-        # self.writer.add_scalar("EER", eer)
-        self.experiment.log_metric(f"EER_{part}", eer, step=epoch)
+        self.writer.add_scalar("EER", eer, fancy_step=epoch)
 
         logs = self.evaluation_metrics.result()
         logs["EER"] = eer

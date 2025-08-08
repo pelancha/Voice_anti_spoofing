@@ -137,7 +137,7 @@ class CometMLWriter:
             name="checkpoints", file_or_folder=checkpoint_path, overwrite=True
         )
 
-    def add_scalar(self, scalar_name, scalar):
+    def add_scalar(self, scalar_name, scalar, fancy_step=None):
         """
         Log a scalar to the experiment tracker.
 
@@ -145,12 +145,21 @@ class CometMLWriter:
             scalar_name (str): name of the scalar to use in the tracker.
             scalar (float): value of the scalar.
         """
-        self.exp.log_metrics(
-            {
-                self._object_name(scalar_name): scalar,
-            },
-            step=self.step,
-        )
+        if fancy_step is None:
+            self.exp.log_metrics(
+                {
+                    self._object_name(scalar_name): scalar,
+                },
+                step=self.step,
+            )
+        else:
+            self.exp.log_metrics(
+                {
+                    self._object_name(scalar_name): scalar,
+                },
+                step=fancy_step,
+            )
+
 
     def add_scalars(self, scalars):
         """
