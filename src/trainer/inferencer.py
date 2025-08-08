@@ -4,6 +4,7 @@ from tqdm.auto import tqdm
 from src.metrics.tracker import MetricTracker
 from src.trainer.base_trainer import BaseTrainer
 
+import numpy as np
 
 class Inferencer(BaseTrainer):
     """
@@ -174,6 +175,9 @@ class Inferencer(BaseTrainer):
         if self.save_path is not None:
             (self.save_path / part).mkdir(exist_ok=True, parents=True)
 
+        all_labels, all_scores = [], []
+        keys = [] if part == "eval" else None
+
         with torch.no_grad():
             for batch_idx, batch in tqdm(
                 enumerate(dataloader),
@@ -187,4 +191,26 @@ class Inferencer(BaseTrainer):
                     metrics=self.evaluation_metrics,
                 )
 
-        return self.evaluation_metrics.result()
+                scores = torch.softmax(batch["logits"], dim=1)[:, 1]
+                all_labels.extend(batch["labels"].detach().cpu().numpy())
+                all_scores.extend(scores.detach().cpu().numpy())
+
+                if part == "eval":
+                    keys.extend(batch["key"])
+
+        all_scores = np.array(all_scores)
+        all_labels = np.array(all_labels)
+
+        bonafide_scores = all_scores[all_labels == 1]
+        spoof_scores = all_scores[all_labels == 0]
+
+        eer = None 
+        for met in self.metrics["inference"]:
+            if met.name == "EER":
+                eer, _ = met(bonafide_scores, spoof_scores) #TODO: rewrite using MetricTracker and process_batch?
+                break
+
+        logs = self.evaluation_metrics.result()
+        logs["EER"] = eer
+
+        return logs
