@@ -308,7 +308,8 @@ class BaseTrainer:
                 eer, _ = met(bonafide_scores, spoof_scores) #TODO: rewrite using MetricTracker and process_batch
                 break
 
-        self.writer.add_scalar("EER", eer)
+        # self.writer.add_scalar("EER", eer)
+        self.experiment.log_metric(f"EER_{part}", eer, step=epoch)
 
         logs = self.evaluation_metrics.result()
         logs["EER"] = eer
@@ -319,7 +320,7 @@ class BaseTrainer:
                 "score": all_scores
             })
         
-            df.to_csv(f"results_epoch_{epoch + 1}.csv", index=False, header=False)
+            df.to_csv(f"results_epoch_{epoch}.csv", index=False, header=False)
             self.logger.info(f"Saved scores to results_epoch_{epoch + 1}.csv")
 
         return logs
