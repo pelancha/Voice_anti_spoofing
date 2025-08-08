@@ -13,14 +13,14 @@ def collate_fn(dataset_items: list[dict]):
         result_batch (dict[Tensor]): dict, containing batch-version
             of the tensors.
     """
-    K = 750 # In https://arxiv.org/pdf/2103.11326 it is claimed that it is enough to fix length of k=750 to cover input features of 98% trials.
+    K = 750 #In https://arxiv.org/pdf/2103.11326 it is claimed that it is enough to fix length of k=750 to cover input features of 98% trials
     result_batch = {"data_object": [], "labels": [], "key": []}
 
     for elem in dataset_items:
         audio = elem["data_object"]
         _, _, length = audio.shape
 
-        if length < K:
+        if length < K: #In chat it was discussed that it is better to concatenate with the cyclicly repeating small part of the original spectrogram
             repeat_factor = (K + length - 1) // length
             audio = audio.repeat(1, 1, repeat_factor)
             audio = audio[:, :, :K]

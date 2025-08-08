@@ -1,10 +1,10 @@
 train:
-  data_object: #TODO: name of the tensor on which we apply transform
+  data_object: 
     _target_: torchvision.transforms.v2.Compose
     transforms:
       - _target_: src.transforms.SpectrogramFrontEnd 
         sample_rate: 16000
-        n_fft: 512
+        n_fft: 512  #STFT config is based on https://arxiv.org/pdf/2103.11326
         win_length_s: 0.020
         hop_length_s: 0.010
         window_fn: torch.hann_window 
@@ -12,7 +12,7 @@ train:
         normalized: False 
         n_filter_banks: 60
 inference:
-  data_object: #TODO: name of the tensor on which we apply transform
+  data_object: 
     _target_: torchvision.transforms.v2.Compose
     transforms:
       - _target_: src.transforms.SpectrogramFrontEnd 

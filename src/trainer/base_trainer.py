@@ -305,7 +305,7 @@ class BaseTrainer:
         eer = None 
         for met in self.metrics["inference"]:
             if met.name == "EER":
-                eer, _ = met(bonafide_scores, spoof_scores) #TODO: rewrite using MetricTracker and process_batch
+                eer, _ = met(bonafide_scores, spoof_scores) #TODO: rewrite using MetricTracker and process_batch?
                 break
 
         self.writer.add_scalar("EER", eer, fancy_step=epoch)
@@ -320,7 +320,7 @@ class BaseTrainer:
             })
         
             df.to_csv(f"results_epoch_{epoch}.csv", index=False, header=False)
-            self.logger.info(f"Saved scores to results_epoch_{epoch + 1}.csv")
+            self.logger.info(f"Saved scores to results_epoch_{epoch}.csv")
 
         return logs
 
