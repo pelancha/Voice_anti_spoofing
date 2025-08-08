@@ -280,7 +280,7 @@ class BaseTrainer:
                     metrics=self.evaluation_metrics,
                 )
 
-                scores = torch.softmax(batch["output"], dim=1)[:, 1]
+                scores = torch.softmax(batch["logits"], dim=1)[:, 1]
                 all_labels.extend(batch["labels"].detach().cpu().numpy())
                 all_scores.extend(scores.detach().cpu().numpy())
 
