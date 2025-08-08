@@ -40,7 +40,10 @@ def main(config):
     #calculate input size for fc layer 
     example_dataset = dataloaders["train"].dataset
     example_sample = example_dataset[0]["data_object"]  
+
+    example_sample = torch.randn(example_sample.size(0), example_sample.size(1), 750)  # the size of all objects are trim-padded in collate_fn
     linear_input_size = computeLinearInputSize(example_sample)
+    print(linear_input_size)
 
     config.model.linear_input_size = linear_input_size
 

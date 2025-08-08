@@ -52,6 +52,8 @@ class Trainer(BaseTrainer):
             metrics.update(loss_name, batch[loss_name].item())
 
         for met in metric_funcs:
+            if met.name == "EER":
+                continue
             metrics.update(met.name, met(**batch))
         return batch
 
